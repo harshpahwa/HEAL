@@ -9,7 +9,9 @@ import os
 import  numpy as np
 import pickle
 from tensorflow import keras
-
+from tensorflow import keras
+import tensorflow.keras.utils as utils
+from keras.applications.vgg16 import preprocess_input
 
 app= Flask(__name__)
 
@@ -40,9 +42,9 @@ def home_kidney():
 def home_liver():
     return render_template("home_liver.html")
 
-@app.route("/home_malaria")
-def home_malaria():
-    return render_template("home_malaria.html")
+@app.route("/home_pneumonia")
+def home_pneumonia():
+    return render_template("home_pneumonia.html")
 
 @app.route("/home_hepatitis")
 def home_hepatitis():
@@ -59,10 +61,9 @@ def brain_tumor_pred():
     img.save('uploads/brain_tumor_img.jpg')
 
     image = Image.open("uploads/brain_tumor_img.jpg")
-    model = keras.models.load_model('models/brain_tumor.h5')
-
+    model = keras.models.load_model('models/brain_tumor.h5',compile=(False))
+    model.compile()
     x = np.array(image.resize((128,128)))
-   
     x = x.reshape(1,128,128,3)
     res = model.predict_on_batch(x)
     pred = np.where(res == np.amax(res))[1][0]
@@ -174,9 +175,9 @@ def diabetes_pred():
 
     # for No Diabetes Risk
     if Y_pred==0:
-        return render_template('no_disease.html',title='Diabetes')
+        return render_template('no_disease.html',title='Diabetes Risk')
     else:
-        return render_template('yes_disease.html',title='Diabetes')
+        return render_template('yes_disease.html',title='Diabetes Risk')
 
 #kidney
 
@@ -205,9 +206,9 @@ def kidney_pred():
 
     # for No ckd Risk
     if Y_pred==0:
-        return render_template('no_disease.html',title='kidney')
+        return render_template('no_disease.html',title='Kidney Disease')
     else:
-        return render_template('yes_disease.html',title='kidney')
+        return render_template('yes_disease.html',title='Kidney Disease')
 
 #liver
 @app.route("/liver_pred",methods=['POST','GET'])
@@ -243,46 +244,25 @@ def liver_pred():
     else:
         return render_template('yes_disease.html',title='Liver Disease')
 
-#malaria
-@app.route("/malaria_pred",methods=['POST','GET'])
-def malaria_pred():
-    sex=int(request.form['sex'])
-    fever=int(request.form['fever'])
-    cold=int(request.form['cold'])
-    rigor = int(request.form['rigor'])
-    fatigue = int(request.form['fatigue'])
-    headace = int(request.form['headace'])
-    bitter_tongue = int(request.form['bitter_tongue'])
-    vomitting = int(request.form['vomitting'])
-    diarrhea = int(request.form['diarrhea'])
-    Convulsion = int(request.form['Convulsion'])
-    Anemia = int(request.form['Anemia'])
-    jundice = int(request.form['jundice'])
-    cocacola_urine = int(request.form['cocacola_urine'])
-    hypoglycemia = int(request.form['hypoglycemia'])
-    prostraction = int(request.form['prostraction'])
-    hyperpyrexia = int(request.form['hyperpyrexia'])
-    x=np.array([sex,fever,cold,rigor,fatigue,headace,bitter_tongue,vomitting,diarrhea,
-               Convulsion,Anemia,jundice,cocacola_urine,hypoglycemia,prostraction,hyperpyrexia]).reshape(1,-1)
-
-    scaler_path=os.path.join('models/scaler_malaria.pkl')
-    scaler=None
-    with open(scaler_path,'rb') as scaler_file:
-        scaler=pickle.load(scaler_file)
-
-    x=scaler.transform(x)
-
-    model_path=os.path.join('models/gnb_malaria.sav')
-    gnb_malaria=joblib.load(model_path)
-
-    Y_pred=gnb_malaria.predict(x)
-
-    # for No Stroke Risk
-    if Y_pred==0:
-        return render_template('no_disease.html',title='Malaria')
+#pneumonia
+@app.route("/pneumonia_pred",methods=['POST','GET'])
+def pneumonia_pred():
+    
+    img = request.files['img']
+    img.save('uploads/pneumonia_img.jpeg')
+    image = Image.open("uploads/pneumonia_img.jpeg")
+    model = keras.models.load_model('models/chest_xray.h5',compile=False)
+    model.compile()
+    img1=utils.load_img("uploads/pneumonia_img.jpeg",target_size=(224,224))
+    x=utils.img_to_array(img1)
+    x=np.expand_dims(x, axis=0)
+    img_data=preprocess_input(x)
+    classes=model.predict(img_data)
+    pred=int(classes[0][0])
+    if pred==1:
+        return render_template('no_disease.html',title='Pneumonia')
     else:
-        return render_template('yes_disease.html',title='Malaria')
-
+        return render_template('yes_disease.html',title='Pneumonia')
 
 
 #brain tumor
