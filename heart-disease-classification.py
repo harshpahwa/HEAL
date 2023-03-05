@@ -9,49 +9,6 @@
 # * 116.4 million, or 46% of US adults are estimated to have hypertension. These are findings related to the new 2017 Hypertension Clinical Practice Guidelines.
 # * On average, someone dies of CVD every 38 seconds. About 2,303 deaths from CVD each day, based on 2016 data.
 # * On average, someone dies of a stroke every 3.70 minutes. About 389.4 deaths from stroke each day, based on 2016 data.
-# 
-# In this notebook i will try to unleash useful insights using this heart disease datasets and by building stacked ensemble model by combining the power of best performing machine learning algorithms.
-# 
-# This notebook is divided into 13 major steps which are as follows:
-# 
-# 1. [Data description](#data-desc)
-# 2. [Importing Libraries & setting up environment](#imp-lib)
-# 3. [Loading dataset](#data-load)
-# 4. [Data Cleaning & Preprocessing](#data-prep)
-# 5. [Exploratory Data Analysis](#data-eda)
-# 6. [OUtlier Detection & Removal](#data-out)
-# 7. [Training & Test Split](#data-train)
-# 8. [Cross Validation](#cross-val)
-# 9. [Model Building](#data-model)
-# 10. [Model evaluation & comparison](#model-eval)<br>
-# 11. [Feature Selection](#model-eval)<br>
-# 12. [Model Evaluation](#model-inter)
-# 13. [Conclusion](#data-conc)
-
-# ## 1. Dataset description<a id='data-desc'></a>
-# 
-# This dataset consists of 11 features and a target variable. It has 6 nominal variables and 5 numeric variables. The detailed description of all the features are as follows:
-# 
-# **1. Age:** Patients Age in years (Numeric)<br>
-# **2. Sex:** Gender of patient (Male - 1, Female - 0) (Nominal)<br>
-# **3. Chest Pain Type:** Type of chest pain experienced by patient categorized into 1 typical, 2 typical angina, 3 non-        anginal pain, 4 asymptomatic (Nominal)<br>
-# **4. resting bp s:** Level of blood pressure at resting mode in mm/HG (Numerical)<br>
-# **5. cholestrol:** Serum cholestrol in mg/dl (Numeric)<br>
-# **6. fasting blood sugar:** Blood sugar levels on fasting > 120 mg/dl represents as 1 in case of true and 0 as false (Nominal)<br>
-# **7. resting ecg:** Result of electrocardiogram while at rest are represented in 3 distinct values 0 : Normal 1: Abnormality in ST-T wave 2: Left ventricular hypertrophy (Nominal)<br>
-# **8. max heart rate:** Maximum heart rate achieved (Numeric)<br>
-# **9. exercise angina:** Angina induced by exercise 0 depicting NO 1 depicting Yes (Nominal)<br>
-# **10. oldpeak:** Exercise induced ST-depression in comparison with the state of rest (Numeric)<br>
-# **11. ST slope:** ST segment measured in terms of slope during peak exercise 0: Normal 1: Upsloping 2: Flat 3: Downsloping (Nominal)<br>
-# 
-# #### Target variable
-# **12. target:** It is the target variable which we have to predict 1 means patient is suffering from heart risk and 0 means patient is normal.
-# 
-
-# ## 2. Importing Libraries<a id='imp-lib'></a>
-
-# In[1]:
-
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -206,9 +163,6 @@ dt.shape
 dt.describe(include =[np.number])
 
 
-# As we can see from above description resting_blood_pressure and cholestrol have some outliers as they have minimum value of 0 whereas cholestrol has outlier on upper side also having maximum value of 603.
-
-# In[14]:
 
 
 # summary statistics of categorical columns
@@ -315,14 +269,6 @@ plot_criteria= ['chest_pain_type', 'target']
 cm = sns.light_palette("red", as_cmap=True)
 (round(pd.crosstab(dt[plot_criteria[0]], dt[plot_criteria[1]], normalize='columns') * 100,2)).style.background_gradient(cmap = cm)
 
-
-# As we can see from above plot **76%** of the chest pain type of the heart disease patients have asymptomatic chest pain. 
-# 
-# Asymptomatic heart attacks medically known as **silent myocardial infarction (SMI)** annually accounts for around 45-50% of morbidities due to cardiac ailments and even premature deaths in India. The incidences among middle aged people experiencing SMI is twice likely to develop in males than females. The symptoms of SMI being very mild in comparison to an actual heart attack; it is described as a silent killer. Unlike the symptoms in a normal heart attack which includes extreme chest pain, stabbing pain in the arms, neck & jaw, sudden shortness of breath, sweating and dizziness, the symptoms of SMI are very brief and hence confused with regular discomfort and most often ignored.
-# 
-# [reference](https://www.maxhealthcare.in/blogs/cardiology/rise-cases-asymptomatic-heart-attacks-amongst-middle-aged-people)
-
-# ### Distribution of Rest ECG
 
 # In[20]:
 
